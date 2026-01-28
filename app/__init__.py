@@ -1,0 +1,3 @@
+"""
+Silogia Backend Application
+"""
