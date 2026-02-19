@@ -6,9 +6,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
+import os
+from dotenv import load_dotenv
 
 from app.core.database import init_db
 from app.api.routers import arguments, users, conversations
+
+# Load environment variables
+load_dotenv()
 
 
 @asynccontextmanager
@@ -25,15 +30,21 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - Load allowed origins from environment variable
+cors_origins_env = os.getenv("CORS_ORIGINS")
+
+if not cors_origins_env:
+    raise ValueError(
+        "CORS_ORIGINS environment variable is not set. "
+        "Please set it in your .env file with your frontend URL(s)."
+    )
+
+# Parse and clean origins
+allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:9002",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:9002",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
