@@ -115,6 +115,7 @@ class Analysis(Base):
     # Relationships
     message = relationship("Message", back_populates="analyses")
     components = relationship("ArgumentComponent", back_populates="analysis", cascade="all, delete-orphan")
+    paragraphs = relationship("ParagraphAnalysisDB", back_populates="analysis", cascade="all, delete-orphan")
     llm_communications = relationship("LLMCommunication", back_populates="analysis", cascade="all, delete-orphan")
 
 
@@ -135,6 +136,27 @@ class ArgumentComponent(Base):
     # Relationships
     analysis = relationship("Analysis", back_populates="components")
     suggestions = relationship("LLMCommunication", back_populates="component", cascade="all, delete-orphan")
+
+
+class ParagraphAnalysisDB(Base):
+    """Paragraph-level analysis storage"""
+    __tablename__ = "paragraph_analyses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_id = Column(Integer, ForeignKey("analyses.id", ondelete="CASCADE"), nullable=False)
+    text = Column(Text, nullable=False)
+    strength = Column(String(50), nullable=False)  # "muy fuerte", "fuerte", "moderada", "débil"
+    premises_count = Column(Integer, default=0, nullable=False)
+    conclusions_count = Column(Integer, default=0, nullable=False)
+    word_count = Column(Integer, default=0, nullable=False)
+    density = Column(Float, default=0.0, nullable=False)
+    strength_score = Column(Integer, default=0, nullable=False)
+    recommendation = Column(Text, nullable=True)
+    sequence_order = Column(Integer, default=0, nullable=False)  # Order in the original text
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    # Relationships
+    analysis = relationship("Analysis", back_populates="paragraphs")
 
 
 class LLMCommunication(Base):

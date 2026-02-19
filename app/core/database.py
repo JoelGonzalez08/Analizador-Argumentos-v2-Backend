@@ -36,7 +36,7 @@ def init_db():
     """Initialize database - create all tables"""
     from app.models.models import (
         User, SessionToken, Conversation, Message, 
-        Analysis, ArgumentComponent, LLMCommunication
+        Analysis, ArgumentComponent, ParagraphAnalysisDB, LLMCommunication
     )
     # Only create tables if they don't exist
     Base.metadata.create_all(bind=engine)

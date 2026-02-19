@@ -112,7 +112,7 @@ async def delete_conversation(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    """Delete a conversation and all related data"""
+    """Delete a conversation and all related data (cascade)"""
     conversation = db.query(Conversation).filter(
         Conversation.id == conversation_id,
         Conversation.user_id == current_user.id
@@ -124,6 +124,36 @@ async def delete_conversation(
             detail="Conversation not found"
         )
     
+    # Get all messages in this conversation
+    messages = db.query(Message).filter(
+        Message.conversation_id == conversation_id
+    ).all()
+    
+    # For each message, delete its analyses and related data
+    for message in messages:
+        # Get all analyses for this message
+        analyses = db.query(Analysis).filter(
+            Analysis.message_id == message.id
+        ).all()
+        
+        for analysis in analyses:
+            # Delete LLM communications (suggestions) for this analysis
+            db.query(LLMCommunication).filter(
+                LLMCommunication.analysis_id == analysis.id
+            ).delete(synchronize_session=False)
+            
+            # Delete argument components for this analysis
+            db.query(ArgumentComponent).filter(
+                ArgumentComponent.analysis_id == analysis.id
+            ).delete(synchronize_session=False)
+            
+            # Delete the analysis itself
+            db.delete(analysis)
+        
+        # Delete the message
+        db.delete(message)
+    
+    # Finally, delete the conversation
     db.delete(conversation)
     db.commit()
     return None

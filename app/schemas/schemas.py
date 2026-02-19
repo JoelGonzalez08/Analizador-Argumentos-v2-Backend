@@ -170,9 +170,29 @@ class AnalysisResponse(AnalysisBase):
         from_attributes = True
 
 
+class ParagraphAnalysisResponse(BaseModel):
+    """Response schema for stored paragraph analysis"""
+    id: int
+    analysis_id: int
+    text: str
+    strength: str
+    premises_count: int
+    conclusions_count: int
+    word_count: int
+    density: float
+    strength_score: int
+    recommendation: Optional[str] = None
+    sequence_order: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class AnalysisWithComponents(AnalysisResponse):
     """Analysis with its components and suggestions"""
     components: List[ArgumentComponentResponse] = []
+    paragraphs: List[ParagraphAnalysisResponse] = []
     suggestions: List['LLMSuggestionResponse'] = Field(default=[], alias='llm_communications')
     
     class Config:
@@ -282,11 +302,24 @@ class ArgumentSuggestion(BaseModel):
     applied: bool = False
 
 
+class ParagraphAnalysis(BaseModel):
+    """Analysis of a single paragraph"""
+    text: str
+    strength: str  # "muy fuerte" | "fuerte" | "moderada" | "débil"
+    premises_count: int
+    conclusions_count: int
+    word_count: int
+    density: float
+    strength_score: int
+    recommendation: Optional[str] = None
+
+
 class CompleteAnalysisResponse(BaseModel):
     """Complete analysis response with components and suggestions"""
     premises: List[ArgumentComponent]
     conclusions: List[ArgumentComponent]
     suggestions: List[ArgumentSuggestion]
+    paragraph_analysis: Optional[List[ParagraphAnalysis]] = None
     message_id: Optional[int] = None
     analysis_id: Optional[int] = None
     analyzed_at: Optional[datetime] = None
