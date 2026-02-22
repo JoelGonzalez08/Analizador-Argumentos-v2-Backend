@@ -43,7 +43,7 @@ class UserCreate(UserBase):
 
 
 class UserLogin(BaseModel):
-    username: str
+    username: str = Field(..., description="Username or email address")
     password: str
 
 

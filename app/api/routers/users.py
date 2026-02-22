@@ -106,14 +106,16 @@ async def login_user(
     credentials: UserLogin,
     db: Session = Depends(get_db)
 ):
-    """Login user and create session token"""
-    # Find user
-    user = db.query(User).filter(User.username == credentials.username).first()
+    """Login user and create session token (accepts username or email)"""
+    # Find user by username or email
+    user = db.query(User).filter(
+        (User.username == credentials.username) | (User.email == credentials.username)
+    ).first()
     
     if not user or not verify_password(credentials.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password"
+            detail="Invalid username/email or password"
         )
     
     if not user.is_active:
