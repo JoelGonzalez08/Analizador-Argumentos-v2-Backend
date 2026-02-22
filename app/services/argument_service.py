@@ -46,7 +46,7 @@ class ArgumentAnalysisService:
                     self.nlp_stanza = stanza.Pipeline('es', download_method=None)
                 except:
                     print("Downloading Stanza Spanish model...")
-                    stanza.download('es', processors='tokenize,pos,lemma', gpu=False)
+                    stanza.download('es', processors='tokenize,pos,lemma')
                     self.nlp_stanza = stanza.Pipeline('es')
                     
             except Exception as e:

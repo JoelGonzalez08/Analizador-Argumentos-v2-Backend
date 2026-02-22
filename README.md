@@ -132,11 +132,11 @@ copy .env.example .env  # Windows
 Edita el archivo `.env`:
 
 ```env
+# API Configuration
+API_KEY=your-openai-api-key-here
 
 # CORS - URLs permitidas (OBLIGATORIO)
-
 CORS_ORIGINS=http://localhost:3000,http://localhost:9002
-```
 
 **IMPORTANTE:**
 - `CORS_ORIGINS` es **obligatorio** - el servidor no arrancará sin él
@@ -163,11 +163,6 @@ O simplemente:
 ```bash
 python main.py
 ```
-
-El servidor estará disponible en:
-- **API:** http://localhost:8000
-- **Documentación interactiva (Swagger):** http://localhost:8000/docs
-- **Documentación alternativa (ReDoc):** http://localhost:8000/redoc
 
 ---
 
@@ -368,33 +363,6 @@ pip install -r requirements.txt
 # 4. Ejecutar
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
-
----
-
-## Testing
-
-```bash
-# Verificar que el servidor esté corriendo
-curl http://localhost:8000/health
-
-# Probar registro de usuario
-curl -X POST http://localhost:8000/api/users/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"test123","username":"testuser"}'
-```
-
----
-
-## Contribución
-
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
 ---
 
 ## Licencia
@@ -403,20 +371,9 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 ---
 
-## Soporte
-
-Si encuentras algún problema o tienes preguntas:
-
-1. Revisa la [documentación interactiva](http://localhost:8000/docs) mientras el servidor está corriendo
-2. Consulta el archivo [DEPLOYMENT.md](DEPLOYMENT.md) para problemas de deployment
-3. Abre un issue en el repositorio
-
----
 
 <div align="center">
 
 **Hecho para mejorar la argumentación académica**
-
-Si te gusta este proyecto, dale una estrella en GitHub
 
 </div>
