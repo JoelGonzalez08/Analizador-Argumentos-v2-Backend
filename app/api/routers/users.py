@@ -91,6 +91,12 @@ async def register_user(
         bio=user.bio,
         country=user.country,
         profession=user.profession,
+        universidad=user.universidad,
+        curso=user.curso,
+        edad=user.edad,
+        carrera=user.carrera,
+        semestre=user.semestre,
+        experiencia_previa=user.experiencia_previa,
         password_hash=hashed_password
     )
     
@@ -190,6 +196,18 @@ async def update_current_user(
         current_user.country = user_update.country
     if user_update.profession is not None:
         current_user.profession = user_update.profession
+    if user_update.universidad is not None:
+        current_user.universidad = user_update.universidad
+    if user_update.curso is not None:
+        current_user.curso = user_update.curso
+    if user_update.edad is not None:
+        current_user.edad = user_update.edad
+    if user_update.carrera is not None:
+        current_user.carrera = user_update.carrera
+    if user_update.semestre is not None:
+        current_user.semestre = user_update.semestre
+    if user_update.experiencia_previa is not None:
+        current_user.experiencia_previa = user_update.experiencia_previa
     
     current_user.updated_at = datetime.utcnow()
     

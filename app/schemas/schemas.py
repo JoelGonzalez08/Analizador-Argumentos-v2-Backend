@@ -36,6 +36,12 @@ class UserBase(BaseModel):
     bio: Optional[str] = None
     country: Optional[str] = None
     profession: Optional[str] = None
+    universidad: Optional[str] = None
+    curso: Optional[str] = None
+    edad: Optional[str] = None
+    carrera: Optional[str] = None
+    semestre: Optional[str] = None
+    experiencia_previa: Optional[str] = None
 
 
 class UserCreate(UserBase):
@@ -64,6 +70,12 @@ class UserUpdate(BaseModel):
     bio: Optional[str] = None
     country: Optional[str] = None
     profession: Optional[str] = None
+    universidad: Optional[str] = None
+    curso: Optional[str] = None
+    edad: Optional[str] = None
+    carrera: Optional[str] = None
+    semestre: Optional[str] = None
+    experiencia_previa: Optional[str] = None
 
 
 # ==================== SESSION SCHEMAS ====================
@@ -79,6 +91,7 @@ class SessionTokenResponse(BaseModel):
 # ==================== CONVERSATION SCHEMAS ====================
 class ConversationBase(BaseModel):
     title: str = Field(default="Nueva Conversación", description="Title of the conversation")
+    section_type: Optional[str] = Field(default=None, description="Section type (e.g. Introducción, Metodología)")
 
 
 class ConversationCreate(ConversationBase):
@@ -87,6 +100,7 @@ class ConversationCreate(ConversationBase):
 
 class ConversationUpdate(BaseModel):
     title: Optional[str] = None
+    section_type: Optional[str] = None
 
 
 class ConversationResponse(ConversationBase):
@@ -154,6 +168,7 @@ class AnalysisBase(BaseModel):
     spec: Optional[str] = None  # JSON completo del análisis
     total_premises: int = 0
     total_conclusions: int = 0
+    is_final: bool = False
 
 
 class AnalysisCreate(AnalysisBase):

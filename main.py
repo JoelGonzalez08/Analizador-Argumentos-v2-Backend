@@ -79,7 +79,7 @@ app.add_middleware(
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=allowed_methods,
-    allow_headers=allowed_headers,
+    allow_headers= allowed_headers,
     max_age=600,  # Cache preflight requests por 10 minutos
 )
 

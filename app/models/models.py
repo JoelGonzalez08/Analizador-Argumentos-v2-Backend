@@ -42,6 +42,12 @@ class User(Base):
     bio = Column(Text, nullable=True)
     country = Column(String(100), nullable=True)
     profession = Column(String(100), nullable=True)
+    universidad = Column(String(255), nullable=True)
+    curso = Column(String(255), nullable=True)
+    edad = Column(String(20), nullable=True)
+    carrera = Column(String(255), nullable=True)
+    semestre = Column(String(50), nullable=True)
+    experiencia_previa = Column(String(10), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     email_verified = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -77,6 +83,7 @@ class Conversation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)  # Usuario obligatorio
     title = Column(String(255), nullable=False, default="Nueva Conversación")  # Título obligatorio con default
+    section_type = Column(String(50), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
@@ -110,6 +117,7 @@ class Analysis(Base):
     total_premises = Column(Integer, default=0, nullable=False)
     total_conclusions = Column(Integer, default=0, nullable=False)
     analyzed_at = Column(DateTime, default=datetime.utcnow, nullable=True)
+    is_final = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # Relationships

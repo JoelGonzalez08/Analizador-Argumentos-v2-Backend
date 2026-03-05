@@ -33,6 +33,7 @@ async def create_conversation(
     new_conversation = Conversation(
         user_id=current_user.id,
         title=conversation.title or "Nueva Conversación",
+        section_type=conversation.section_type,
     )
     db.add(new_conversation)
     db.commit()
@@ -99,6 +100,9 @@ async def update_conversation(
     
     if conversation_update.title is not None:
         conversation.title = conversation_update.title
+        conversation.updated_at = datetime.utcnow()
+    if conversation_update.section_type is not None:
+        conversation.section_type = conversation_update.section_type
         conversation.updated_at = datetime.utcnow()
     
     db.commit()
@@ -241,6 +245,7 @@ async def get_conversation_analyses(
             'spec': analysis.spec,
             'total_premises': analysis.total_premises,
             'total_conclusions': analysis.total_conclusions,
+            'is_final': bool(analysis.is_final),
             'analyzed_at': analysis.analyzed_at,
             'created_at': analysis.created_at,
             'components': analysis.components,
@@ -249,3 +254,49 @@ async def get_conversation_analyses(
         result.append(analysis_dict)
     
     return result
+
+
+@router.patch("/{conversation_id}/analyses/{analysis_id}/final", response_model=dict)
+async def toggle_analysis_final(
+    conversation_id: int,
+    analysis_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Toggle the is_final flag on an analysis. Only one analysis per conversation can be final."""
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+
+    if not conversation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+
+    analysis = db.query(Analysis).join(Message).filter(
+        Analysis.id == analysis_id,
+        Message.conversation_id == conversation_id
+    ).first()
+
+    if not analysis:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Analysis not found"
+        )
+
+    if analysis.is_final:
+        # Unmark this one
+        analysis.is_final = 0
+    else:
+        # Unmark all others in this conversation, then mark this one
+        all_analyses = db.query(Analysis).join(Message).filter(
+            Message.conversation_id == conversation_id
+        ).all()
+        for a in all_analyses:
+            a.is_final = 0
+        analysis.is_final = 1
+
+    db.commit()
+    return {"id": analysis.id, "is_final": bool(analysis.is_final)}
