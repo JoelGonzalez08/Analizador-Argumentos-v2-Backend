@@ -106,6 +106,7 @@ class ConversationUpdate(BaseModel):
 class ConversationResponse(ConversationBase):
     id: int
     user_id: int
+    is_final: bool = False
     created_at: datetime
     updated_at: datetime
 

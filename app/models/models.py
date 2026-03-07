@@ -84,6 +84,7 @@ class Conversation(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)  # Usuario obligatorio
     title = Column(String(255), nullable=False, default="Nueva Conversación")  # Título obligatorio con default
     section_type = Column(String(50), nullable=True)
+    is_final = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

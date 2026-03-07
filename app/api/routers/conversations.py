@@ -300,3 +300,34 @@ async def toggle_analysis_final(
 
     db.commit()
     return {"id": analysis.id, "is_final": bool(analysis.is_final)}
+
+
+@router.patch("/{conversation_id}/final", response_model=dict)
+async def toggle_conversation_final(
+    conversation_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Toggle the is_final flag on a conversation. Only one conversation per user can be final."""
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+
+    if not conversation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+
+    if conversation.is_final:
+        conversation.is_final = 0
+    else:
+        # Unmark all other conversations for this user, then mark this one
+        db.query(Conversation).filter(
+            Conversation.user_id == current_user.id
+        ).update({"is_final": 0}, synchronize_session=False)
+        conversation.is_final = 1
+
+    db.commit()
+    return {"id": conversation.id, "is_final": bool(conversation.is_final)}
